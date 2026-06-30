@@ -1,28 +1,30 @@
 #!/usr/bin/python3
-"""Gather data from an API."""
-
+"""Module that, for a given employee ID, returns information about
+his/her TODO list progress.
+"""
 import requests
 import sys
 
+
 if __name__ == "__main__":
-    user_id = sys.argv[1]
+    employee_id = int(sys.argv[1])
+    base_url = "https://jsonplaceholder.typicode.com"
 
-    user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
-    ).json()
+    user_response = requests.get("{}/users/{}".format(base_url, employee_id))
+    user = user_response.json()
+    employee_name = user.get("name")
 
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos",
-        params={"userId": user_id}
-    ).json()
+    todos_response = requests.get(
+        "{}/todos".format(base_url),
+        params={"userId": employee_id}
+    )
+    todos = todos_response.json()
 
-    done_tasks = [task for task in todos if task["completed"] is True]
+    total_tasks = len(todos)
+    done_tasks = [task for task in todos if task.get("completed") is True]
+    number_of_done_tasks = len(done_tasks)
 
     print("Employee {} is done with tasks({}/{}):".format(
-        user["name"],
-        len(done_tasks),
-        len(todos)
-    ))
-
+        employee_name, number_of_done_tasks, total_tasks))
     for task in done_tasks:
-        print("\t {}".format(task["title"]))
+        print("\t {}".format(task.get("title")))
