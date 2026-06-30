@@ -4,7 +4,6 @@
 import requests
 import sys
 
-
 if __name__ == "__main__":
     user_id = sys.argv[1]
 
@@ -17,15 +16,13 @@ if __name__ == "__main__":
         params={"userId": user_id}
     ).json()
 
-    done_tasks = [task for task in todos if task.get("completed")]
+    done_tasks = [task for task in todos if task["completed"] is True]
 
-    print(
-        "Employee {} is done with tasks({}/{}):".format(
-            user.get("name"),
-            len(done_tasks),
-            len(todos)
-        )
-    )
+    print("Employee {} is done with tasks({}/{}):".format(
+        user["name"],
+        len(done_tasks),
+        len(todos)
+    ))
 
     for task in done_tasks:
-        print("\t {}".format(task.get("title")))
+        print("\t {}".format(task["title"]))
